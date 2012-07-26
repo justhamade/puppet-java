@@ -6,9 +6,9 @@ class java::params {
             default	=> "x64",
         }
         $java_version = $::hostname ? {
-            default	=> "6u31",
+            default	=> "1.6.0_31",
         }
         $java_base = $::hostname ? {
-            default     => "/usr/local/java",
+            default     => "/usr/local",
         }
 }
