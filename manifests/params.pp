@@ -2,10 +2,13 @@
 
 class java::params {
 
+        $architecture = $::hostname ? {
+            default	=> "x64",
+        }
         $java_version = $::hostname ? {
-            default	=> "1.7.0_03",
+            default	=> "6u31",
         }
         $java_base = $::hostname ? {
-            default     => "/opt/java",
+            default     => "/usr/local/java",
         }
 }
