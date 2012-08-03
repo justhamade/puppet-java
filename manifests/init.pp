@@ -13,7 +13,6 @@ class java {
 		cwd         => "${java::params::java_base}",
 		creates     => "${java::params::java_base}/jdk${java::params::java_version}-${java::params::architecture}",
 		alias       => "untar-java",
-		refreshonly => true,
     require   => File["java-tar"]
 	}
 	file { "${java::params::java_base}/jdk${java::params::java_version}-${java::params::architecture}":
