@@ -1,21 +1,24 @@
 # /etc/puppet/modules/java/manifests/init.pp
-class java {
-  require java::params
-  file { "${java::params::java_base}/jdk${java::params::java_version}-${java::params::architecture}.tar.gz":
+class java (  $base_dir                = $java::params::java_base,
+              $version                 = $java::params::java_version,
+              $architecture            = $java::params::architecture,
+             ) inherits tomcat6::params {
+  file { "${base_dir}/jdk${version}-${architecture}.tar.gz":
     mode     => 0644,
     owner    => root,
     group    => root,
-    source   => "puppet:///modules/java/jdk${java::params::java_version}-${java::params::architecture}.tar.gz",
+    source   => "puppet:///modules/java/jdk${version}-${architecture}.tar.gz",
     alias    => "java-tar",
   }
-  exec { "untar jdk${java::params::java_version}-${java::params::architecture}.tar.gz":
-    command     => "/bin/tar zxf jdk${java::params::java_version}-${java::params::architecture}.tar.gz",
-    cwd         => "${java::params::java_base}",
-    creates     => "${java::params::java_base}/jdk${java::params::java_version}-${java::params::architecture}",
-    alias       => "untar-java",
-    require     => File["java-tar"]
+
+  archive::extract { "jdk${version}-${architecture}":
+    ensure  => present,
+    target  => ${base_dir},
+    src_target => ${base_dir},
+    require => File["java-tar"],
+    notify  => File["java-app-dir"],
   }
-  file { "${java::params::java_base}/jdk${java::params::java_version}-${java::params::architecture}":
+  file { "${base_dir}/jdk${version}-${architecture}":
     ensure    => "directory",
     mode      => 0644,
     owner     => root,
@@ -25,7 +28,7 @@ class java {
   }
   file { "/usr/local/java":
     ensure => "link",
-    target => "${java::params::java_base}/jdk${java::params::java_version}-${java::params::architecture}",
+    target => "${base_dir}/jdk${version}-${architecture}",
   }
   file { "/etc/profile.d/set_java_home.sh":
     ensure => present,
